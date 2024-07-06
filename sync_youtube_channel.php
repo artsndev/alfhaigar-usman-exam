@@ -3,7 +3,7 @@
 $apiKey = 'AIzaSyCH18pSUMlNZweBiQK2VCe2_MvFBKvjxIY';
 
 // My Youtube Channel ID
-$channelId = 'UCG1VYCPWcZgqrCMI5v8UcVQ';
+$channelId = 'UC29ju8bIPH5as8OGnQzwJyA';
 
 // Database connection
 $mysqli = new mysqli("localhost", "root", "", "youtube_db");
@@ -11,6 +11,7 @@ $mysqli = new mysqli("localhost", "root", "", "youtube_db");
 if ($mysqli->connect_error) {
     die("Connection failed: " . $mysqli->connect_error);
 }
+
 function fetchFromYouTube($url) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
