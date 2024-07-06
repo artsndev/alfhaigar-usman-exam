@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Show Youtube Channel</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/axios@1.6.7/dist/axios.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <div class="card mt-5">
+                <div class="card-body">
+                    <h3>{{ channel?.name + '\'s Channel' ?? 'Loading...' }}</h3>
+                    <table class="table">
+                        <thead class="text-center">
+                            <tr>
+                                <th>Channel ID</th>
+                                <th>Title</th>
+                                <th>Thumbnail</th>
+                                <th>Video Link</th>
+                                <th>Published Date</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+                            <tr v-for="video in paginatedVideos" :key="video.id">
+                                <td>{{ video.channel_id }}</td>
+                                <td class="fw-bold">{{ video.title }}</td>
+                                <td><img :src="video.thumbnail" alt="Thumbnail" width="100"></td>
+                                <td><a :href="video.video_link" target="_blank">Watch</a></td>
+                                <td>{{ new Date(video.published_at).toLocaleDateString() }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            <li class="page-item" :class="{ disabled: page === 1 }">
+                                <a class="page-link" href="#" aria-label="Previous" @click.prevent="prevPage">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item" v-for="n in totalPages" :key="n" :class="{ active: page === n }">
+                                <a class="page-link" href="#" @click.prevent="page = n">{{ n }}</a>
+                            </li>
+                            <li class="page-item" :class="{ disabled: page * perPage >= videos.length }">
+                                <a class="page-link" href="#" aria-label="Next" @click.prevent="nextPage">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const { createApp, ref, computed, onMounted } = Vue
+
+        createApp({
+            setup() {
+                const channel = ref(null)
+                const videos = ref([])
+                const page = ref(1)
+                const perPage = ref(20)
+
+                const paginatedVideos = computed(() => {
+                    const start = (page.value - 1) * perPage.value
+                    const end = start + perPage.value
+                    return videos.value.slice(start, end)
+                })
+
+                const totalPages = computed(() => {
+                    return Math.ceil(videos.value.length / perPage.value)
+                })
+
+                const fetchChannelData = async () => {
+                    try {
+                        const response = await axios.get('http://localhost:8000/youtube_channel_json.php')
+                        channel.value = response.data.channel
+                        videos.value = response.data.videos || []  // Ensure videos is an array
+                        console.log(response.data)
+                    } catch (error) {
+                        console.error('Error fetching data', error)
+                    }
+                }
+
+                const nextPage = () => {
+                    if (page.value * perPage.value < (videos.value ? videos.value.length : 0)) {
+                        page.value++
+                    }
+                }
+
+                const prevPage = () => {
+                    if (page.value > 1) {
+                        page.value--
+                    }
+                }
+
+                onMounted(() => {
+                    fetchChannelData()
+                })
+
+                return {
+                    channel,
+                    videos,
+                    page,
+                    perPage,
+                    paginatedVideos,
+                    totalPages,
+                    nextPage,
+                    prevPage
+                }
+            }
+        }).mount('#app')
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+</body>
+</html>
