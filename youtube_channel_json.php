@@ -8,11 +8,11 @@ if ($mysqli->connect_error) {
 }
 
 // Get channel information
-$channelQuery = $mysqli->query("SELECT * FROM youtube_channels WHERE channel_id = 'UC29ju8bIPH5as8OGnQzwJyA'");
+$channelQuery = $mysqli->query("SELECT * FROM youtube_channels WHERE channel_id = 'YOUR_CHANNEL_ID'");
 $channel = $channelQuery->fetch_assoc();
 
 // Get videos information
-$videosQuery = $mysqli->query("SELECT * FROM youtube_channel_videos WHERE channel_id = 'UC29ju8bIPH5as8OGnQzwJyA' ORDER BY published_at DESC LIMIT 100");
+$videosQuery = $mysqli->query("SELECT * FROM youtube_channel_videos WHERE channel_id = 'YOUR_CHANNEL_ID' ORDER BY published_at DESC LIMIT 100");
 $videos = [];
 while ($video = $videosQuery->fetch_assoc()) {
     $videos[] = $video;

@@ -1,13 +1,8 @@
 <?php
-// My API Key
-$apiKey = 'AIzaSyCH18pSUMlNZweBiQK2VCe2_MvFBKvjxIY';
 
-// My Youtube Channel ID
-$channelId = 'UC29ju8bIPH5as8OGnQzwJyA';
-
-// Database connection
+$apiKey = 'YOUR_API_KEY';
+$channelId = 'YOUR_CHANNEL_ID';
 $mysqli = new mysqli("localhost", "root", "", "youtube_db");
-
 if ($mysqli->connect_error) {
     die("Connection failed: " . $mysqli->connect_error);
 }
